@@ -1,3 +1,4 @@
+#! /usr/bin/env bash
 #Autor: Francisco Javier Huete Mejías
 #Descripción:
 #Versión: 1.0
@@ -49,17 +50,6 @@ echo "$0 Versión: 1.0"
 exit 0
 }
 
-#Zona del script
-
-#Control de argumentos
-while getopts "hv" opcion; do
-	case $opcion in
-		h) mostrar_ayuda; exit 0;;
-		v) mostrar_version ;;
-		?) mostrar_ayuda; exit 1
-	esac
-done
-
 #Comprobar la conexión
 validar_conexion () {
 	if ping -c 1 -W 1 8.8.8.8 &> /dev/null; then
@@ -77,3 +67,24 @@ validar_root() {
 		return 1
 	fi
 }
+
+#Zona del script
+
+#Control de argumentos
+while getopts "hv" opcion; do
+	case $opcion in
+		h) mostrar_ayuda; exit 0;;
+		v) mostrar_version ;;
+		?) mostrar_ayuda; exit 1
+	esac
+done
+
+
+validar_root
+if [ $?=1 ]; then
+	echo "[ERROR] - Este script se debe ejecutar como root."
+else
+	validar_conexion
+	if [ $?=1 ]; then
+	echo "[ERROR] - No hay conexión a Internet."
+fi
