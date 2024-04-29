@@ -1,5 +1,5 @@
 #! /usr/bin/env bash
-#Autor: Francisco Javier Huete Mejías
+#Autor: Lucía Garrote Ruiz, Francisco Javier Huete Mejías
 #Descripción:
 #Versión: 1.0
 #Fecha:
