@@ -38,8 +38,8 @@ fin_formato="\e[0m"
 #Zona de declaración de funciones
 
 mostrar_ayuda() {
-echo "Uso: $0 [ARGUMENTOS]
-Descripción: Este script actualiza el sistema diariamente.
+echo "Uso: $0
+Descripción: Este script actualiza el sistema diariamente. Se debe ejecutar con privilegios de root.
 Parámetros aceptados:
 	-h Muestra esta ayuda
 	-v Muestra la versión "
@@ -54,17 +54,19 @@ exit 0
 validar_conexion () {
 	if ping -c 1 -W 1 8.8.8.8 &> /dev/null; then
 		return 0
+	else
+		echo "$rojo$negrita[ERROR]$fin_formato - No hay conexión a Internet."
+		exit 1
 	fi
-	return 1
 }
 
 #Comprobar si el script se está ejecutando con privilegios de root
 validar_root() {
-	local uid="$(f_uid)"
-	if [ "$uid" -eq 0 ]; then
+	if [ $(whoami) = 'root' ]; then
 		return 0
 	else
-		return 1
+		echo -e "$rojo$negrita[ERROR]$fin_formato - Este script se debe ejecutar como root."
+		exit 1
 	fi
 }
 
@@ -79,12 +81,5 @@ while getopts "hv" opcion; do
 	esac
 done
 
-
 validar_root
-if [ $?=1 ]; then
-	echo "[ERROR] - Este script se debe ejecutar como root."
-else
-	validar_conexion
-	if [ $?=1 ]; then
-	echo "[ERROR] - No hay conexión a Internet."
-fi
+validar_conexion
