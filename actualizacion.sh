@@ -70,6 +70,34 @@ validar_root() {
 	fi
 }
 
+# Función para registrar mensajes en el archivo de log
+
+# Ruta del archivo de log
+LOG_FILE="/var/log/auto_update.log"
+
+log_message() {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") $1" >> "$LOG_FILE"
+}
+
+# Actualizar los repositorios e instalar actualizaciones
+actualizar_repo() {
+	if command -v apt-get &>/dev/null; then
+    	apt-get update -y >> "$LOG_FILE" 2>&1
+    	apt-get upgrade -y >> "$LOG_FILE" 2>&1
+    	apt-get autoclean -y >> "$LOG_FILE" 2>&1
+    	apt-get autoremove -y >> "$LOG_FILE" 2>&1
+	elif command -v yum &>/dev/null; then
+	    yum update -y >> "$LOG_FILE" 2>&1
+	elif command -v dnf &>/dev/null; then
+	    dnf update -y >> "$LOG_FILE" 2>&1
+	elif command -v pacman &>/dev/null; then
+	    pacman -Syu --noconfirm >> "$LOG_FILE" 2>&1
+	else
+    	echo "No se ha podido determinar el gestor de paquetes del sistema"
+    	exit 1
+	fi
+}
+
 #Zona del script
 
 #Control de argumentos
