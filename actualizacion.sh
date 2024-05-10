@@ -93,10 +93,14 @@ actualizar_repo() {
         exit 1
     fi
 }
+
 # Programar la ejecución diaria a las 9:00 AM
 programar_ejecucion() {
-    # Crear una línea en el crontab para ejecutar el script a las 9:00 AM
-    echo "0 9 * * * root $PWD/$0" | sudo tee -a /etc/crontab >/dev/null
+    # Comprobar si la línea ya está presente en el crontab
+    if ! grep -q "$PWD/$0" /etc/crontab; then
+        # Agregar la línea al crontab si no está presente
+        echo "0 9 * * * root $PWD/$0" | sudo tee -a /etc/crontab >/dev/null
+    fi
 }
 
 #Zona del script
