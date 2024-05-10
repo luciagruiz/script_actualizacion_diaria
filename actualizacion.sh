@@ -55,7 +55,7 @@ validar_conexion () {
 	if ping -c 1 -W 1 8.8.8.8 &> /dev/null; then
 		return 0
 	else
-		echo "$rojo$negrita[ERROR]$fin_formato - No hay conexión a Internet."
+		echo -e "$rojo$negrita[ERROR]$fin_formato - No hay conexión a Internet."
 		exit 1
 	fi
 }
