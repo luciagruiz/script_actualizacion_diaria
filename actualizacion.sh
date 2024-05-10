@@ -71,31 +71,32 @@ validar_root() {
 }
 
 # Función para registrar mensajes en el archivo de log
-
-# Ruta del archivo de log
-LOG_FILE="/var/log/auto_update.log"
-
 log_message() {
-    echo "$(date +"%Y-%m-%d %H:%M:%S") $1" >> "$LOG_FILE"
+    echo "$(date +"%Y-%m-%d %H:%M:%S") $1" >> "/var/log/auto_update.log"
 }
 
 # Actualizar los repositorios e instalar actualizaciones
 actualizar_repo() {
-	if command -v apt-get &>/dev/null; then
-    	apt-get update -y >> "$LOG_FILE" 2>&1
-    	apt-get upgrade -y >> "$LOG_FILE" 2>&1
-    	apt-get autoclean -y >> "$LOG_FILE" 2>&1
-    	apt-get autoremove -y >> "$LOG_FILE" 2>&1
-	elif command -v yum &>/dev/null; then
-	    yum update -y >> "$LOG_FILE" 2>&1
-	elif command -v dnf &>/dev/null; then
-	    dnf update -y >> "$LOG_FILE" 2>&1
-	elif command -v pacman &>/dev/null; then
-	    pacman -Syu --noconfirm >> "$LOG_FILE" 2>&1
-	else
-    	echo "No se ha podido determinar el gestor de paquetes del sistema"
-    	exit 1
-	fi
+    if command -v apt-get &> /dev/null; then
+        apt-get update -y >> "/var/log/auto_update.log" 2>&1
+        apt-get upgrade -y >> "/var/log/auto_update.log" 2>&1
+        apt-get autoclean -y >> "/var/log/auto_update.log" 2>&1
+        apt-get autoremove -y >> "/var/log/auto_update.log" 2>&1
+    elif command -v yum &> /dev/null; then
+        yum update -y >> "/var/log/auto_update.log" 2>&1
+    elif command -v dnf &> /dev/null; then
+        dnf update -y >> "/var/log/auto_update.log" 2>&1
+    elif command -v pacman &> /dev/null; then
+        pacman -Syu --noconfirm >> "/var/log/auto_update.log" 2>&1
+    else
+        echo "No se ha podido determinar el gestor de paquetes del sistema"
+        exit 1
+    fi
+}
+# Programar la ejecución diaria a las 9:00 AM
+programar_ejecucion() {
+    # Crear una línea en el crontab para ejecutar el script a las 9:00 AM
+    echo "0 9 * * * root $PWD/$0" | sudo tee -a /etc/crontab >/dev/null
 }
 
 #Zona del script
@@ -111,3 +112,6 @@ done
 
 validar_root
 validar_conexion
+actualizar_repo
+log_message "Sistema actualizado correctamente."
+programar_ejecucion
