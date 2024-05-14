@@ -110,7 +110,7 @@ while getopts "hv" opcion; do
 	case $opcion in
 		h) mostrar_ayuda; exit 0;;
 		v) mostrar_version ;;
-		?) mostrar_ayuda; exit 1
+		?) mostrar_ayuda; exit 1 ;;
 	esac
 done
 
@@ -119,3 +119,9 @@ validar_conexion
 actualizar_repo
 log_message "Sistema actualizado correctamente."
 programar_ejecucion
+
+#Tareas pendientes
+#Menú de opciones:
+#Notificación por correo
+#Preguntar si se actualiza diariamente. Si sí: Elegir la hora.
+
