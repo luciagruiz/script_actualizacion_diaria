@@ -5,7 +5,7 @@
 #Fecha:
 #Zona de depuración
         #Inicio de la zona de depuración con set -x (descomentar para activar)
-set -x
+#set -x
         #Advertencia de falta de variable (descomentar para activar)
 #set -u
 #Zona de declaración de variables
@@ -38,11 +38,12 @@ fin_formato="\e[0m"
 #Zona de declaración de funciones
 
 mostrar_ayuda() {
-echo "Uso: $0
-Descripción: Este script actualiza el sistema diariamente. Se debe ejecutar con privilegios de root.
-Parámetros aceptados:
+echo -e ""$negrita"Uso:"$fin_formato" $0
+"$negrita"Descripción:"$fin_formato" Este script actualiza el sistema diariamente. Se debe ejecutar con privilegios de root.
+"$negrita"Parámetros aceptados:"$fin_formato"
 	-h Muestra esta ayuda
-	-v Muestra la versión "
+	-v Muestra la versión 
+"$negrita"Ejemplos de uso: "$fin_formato""
 }
 
 mostrar_version() {
@@ -163,5 +164,10 @@ pregunta
 #Tareas pendientes
 #Menú de opciones:
 #Notificación por correo
+<<<<<<< HEAD
 #Preguntar si se actualiza diariamente. Si sí: Elegir la hora.
 ##cat /etc/os-release
+=======
+#Preguntar si se actualiza diariamente. Si sí: Elegir la hora; si no, actualizar sólo una vez.
+
+>>>>>>> bf624ec (Actualización)
