@@ -76,6 +76,11 @@ log_message() {
     echo "$(date +"%Y-%m-%d %H:%M:%S") $1" >> "/var/log/auto_update.log"
 }
 
+comprobar_distro() {
+	distro=cat /etc/os-release | grep '^ID=' | cut -d'=' -f2
+	return $distro
+}
+
 # Actualizar los repositorios e instalar actualizaciones
 actualizar_repo() {
     if command -v apt-get &> /dev/null; then
