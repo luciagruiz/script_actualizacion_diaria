@@ -192,21 +192,13 @@ programar_ejecucion() {
     fi
 }
 
-configurar_script() {
-	validar_root
-	validar_conexion
-	actualizar_repo
-	log_message "Sistema actualizado correctamente."
-	pregunta
-}
-
 #Zona del script
 
 #Control de argumentos
 while getopts "achv" opcion; do
 	case $opcion in
 		a) comprobar_ejecucion_diaria; exit 0;;
-		c) configurar_script; exit 0;; 
+		c) pregunta; exit 0;; 
 		h) mostrar_ayuda; exit 0;;
 		v) mostrar_version ;;
 		?) mostrar_ayuda; exit 1 ;;
