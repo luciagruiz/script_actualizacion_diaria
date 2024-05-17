@@ -38,12 +38,30 @@ fin_formato="\e[0m"
 #Zona de declaración de funciones
 
 mostrar_ayuda() {
-echo -e ""$negrita"Uso:"$fin_formato" $0
-"$negrita"Descripción:"$fin_formato" Este script actualiza el sistema diariamente. Se debe ejecutar con privilegios de root.
-"$negrita"Parámetros aceptados:"$fin_formato"
-	-h Muestra esta ayuda
-	-v Muestra la versión 
-"$negrita"Ejemplos de uso: "$fin_formato""
+	echo -e ""$negrita"Uso:"$fin_formato" $0 [OPCIÓN]
+	"$negrita"Descripción:"$fin_formato" Este script actualiza el sistema \
+diariamente. Se debe ejecutar con privilegios de root.
+	"$negrita"Parámetros aceptados:"$fin_formato"
+		-a Muestra la hora a la que se ha programado la ejecución diaria de \
+este script
+		-c Configura el script de forma interactiva
+		-p HORA Programa la ejecución diaria del script a una hora determinada. \
+El formato aceptado para la hora es HH:MM con una hora entre 00 y 24.
+		-h Muestra esta ayuda
+		-v Muestra la versión 
+	"$negrita"Ejemplos de uso: "$fin_formato"
+		Para actualizar el sistema:
+		$0
+		
+		Para comprobar la hora a la que hay programada una actualización \
+diaria del sistema:
+		$0 -a
+		
+		Para configurar una actualización diaria del sistema de forma interactiva:
+		$0 -c
+		
+		Para configurar una actualización diaria del sistema a las 9 de la mañana:
+		$0 -p 09:00"
 }
 
 mostrar_version() {
@@ -66,7 +84,8 @@ validar_root() {
 	if [ $(whoami) = 'root' ]; then
 		return 0
 	else
-		echo -e "$rojo$negrita[ERROR]$fin_formato - Este script se debe ejecutar como root."
+		echo -e "$rojo$negrita[ERROR]$fin_formato - Este script se debe \
+ejecutar como root."
 		exit 1
 	fi
 }
@@ -84,19 +103,28 @@ comprobar_distro() {
 # Actualizar los repositorios e instalar actualizaciones
 actualizar_repo() {
 		comprobar_distro
-    if [[ $distro = "debian" ]] || [[ $distro = "ubuntu" ]] || [[ $distro = "kali" ]] || [[ $distro = "tails" ]] || [[ $distro = "pureOS" ]] || command -v apt-get &> /dev/null; then
+    if [[ $distro = "debian" ]] || [[ $distro = "ubuntu" ]] || 
+    [[ $distro = "kali" ]] || [[ $distro = "tails" ]] || 
+    [[ $distro = "pureOS" ]] || command -v apt-get &> /dev/null; then
         apt-get update -y >> "/var/log/auto_update.log" 2>&1
         apt-get upgrade -y >> "/var/log/auto_update.log" 2>&1
         apt-get autoclean -y >> "/var/log/auto_update.log" 2>&1
         apt-get autoremove -y >> "/var/log/auto_update.log" 2>&1
-    elif [[ $distro = "redhat" ]] || [[ $distro = "centOS" ]] || [[ $distro = "rocky" ]] || [[ $distro = "alma" ]] || [[ $distro = "fedora" ]] || command -v yum &> /dev/null; then
+    elif [[ $distro = "redhat" ]] || [[ $distro = "centOS" ]] || 
+    [[ $distro = "rocky" ]] || [[ $distro = "alma" ]] || 
+    [[ $distro = "fedora" ]] || command -v yum &> /dev/null; then
         yum update -y >> "/var/log/auto_update.log" 2>&1
-    elif [[ $distro = "redhat" ]] || [[ $distro = "centOS" ]] || [[ $distro = "rocky" ]] || [[ $distro = "alma" ]] || [[ $distro = "fedora" ]] || command -v dnf &> /dev/null; then
+    elif [[ $distro = "redhat" ]] || [[ $distro = "centOS" ]] || 
+    [[ $distro = "rocky" ]] || [[ $distro = "alma" ]] || 
+    [[ $distro = "fedora" ]] || command -v dnf &> /dev/null; then
         dnf update -y >> "/var/log/auto_update.log" 2>&1
-    elif [[ $distro = "arch" ]] || [[ $distro = "crystal" ]] || [[ $distro = "steam" ]] || [[ $distro = "garuda" ]] || [[ $distro = "tearch" ]] || command -v pacman &> /dev/null; then
+    elif [[ $distro = "arch" ]] || [[ $distro = "crystal" ]] || 
+    [[ $distro = "steam" ]] || [[ $distro = "garuda" ]] || 
+    [[ $distro = "tearch" ]] || command -v pacman &> /dev/null; then
         pacman -Syu --noconfirm >> "/var/log/auto_update.log" 2>&1
     else
-        echo -e "$rojo$negrita[ERROR]$fin_formato -  No se ha podido determinar el gestor de paquetes del sistema"
+        echo -e "$rojo$negrita[ERROR]$fin_formato -  No se ha podido \
+determinar el gestor de paquetes del sistema"
         exit 1
     fi
 }
@@ -105,7 +133,8 @@ actualizar_repo() {
 pregunta() {
     read -p "¿Desea que el sistema se actualice diariamente? (s/n): " respuesta
     if [ "$respuesta" = "s" ]; then
-        read -p "Por favor, ingrese la hora de actualización (formato HH:MM, por ejemplo, 09:00): " hora
+        read -p "Por favor, ingrese la hora de actualización (formato HH:MM, \
+por ejemplo, 09:00): " hora
         programar_ejecucion
     else
         echo "No se realizará la actualización diaria."
@@ -119,7 +148,8 @@ comprobar_ejecucion_diaria() {
         linea_existente=$(grep "$PWD/$0" /etc/crontab)
         hora_existente=$(echo "$linea_existente" | awk '{print $2}')
         minuto_existente=$(echo "$linea_existente" | awk '{print $1}')
-        echo "La actualización diaria está programada para las $hora_existente:$minuto_existente"
+        echo "La actualización diaria está programada para \
+las $hora_existente:$minuto_existente"
     else
         echo "No hay ninguna ejecución diaria programada."
     fi
@@ -129,7 +159,8 @@ comprobar_ejecucion_diaria() {
 programar_ejecucion() {
     # Comprobar si la línea ya está presente en el crontab
     if grep -q "$PWD/$0" /etc/crontab; then
-        read -p "Ya hay una ejecución diaria del script programada, ¿deseas eliminarla? (s/n): " respuesta2
+        read -p "Ya hay una ejecución diaria del script programada, \
+¿deseas eliminarla? (s/n): " respuesta2
         if [ "$respuesta2" = "s" ]; then
             # Eliminar la línea del crontab
             sudo sed -i "\~^.*$PWD/$0.*\$~d" /etc/crontab
@@ -139,8 +170,10 @@ programar_ejecucion() {
             hora2=$(echo "$hora" | cut -d':' -f1)
             minuto=$(echo "$hora" | cut -d':' -f2)
         
-            # Agregar la línea al crontab con la hora especificada por el usuario
-            echo "$minuto $hora2 * * * root $PWD/$0" | sudo tee -a /etc/crontab >/dev/null
+            # Agregar la línea al crontab con la hora especificada por el 
+            #usuario
+            echo "$minuto $hora2 * * * root $PWD/$0" | sudo tee -a 
+            /etc/crontab >/dev/null
             echo "Se programará la actualización diaria a las $hora"
         
         else
@@ -153,7 +186,8 @@ programar_ejecucion() {
         minuto=$(echo "$hora" | cut -d':' -f2)
         
         # Agregar la línea al crontab con la hora especificada por el usuario
-        echo "$minuto $hora2 * * * root $PWD/$0" | sudo tee -a /etc/crontab >/dev/null
+        echo "$minuto $hora2 * * * root $PWD/$0" | sudo tee -a 
+        /etc/crontab >/dev/null
         echo "Se programará la actualización diaria a las $hora"
     fi
 }
@@ -183,9 +217,3 @@ validar_root
 validar_conexion
 actualizar_repo
 log_message "Sistema actualizado correctamente."
-
-#Tareas pendientes
-#Menú de opciones:
-#Notificación por correo
-##cat /etc/os-release
-#Preguntar si se actualiza diariamente. Si sí: Elegir la hora; si no, actualizar sólo una vez.
