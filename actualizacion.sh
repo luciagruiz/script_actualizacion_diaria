@@ -83,19 +83,19 @@ comprobar_distro() {
 
 # Actualizar los repositorios e instalar actualizaciones
 actualizar_repo() {
-    if command -v apt-get &> /dev/null; then
+    if [[ $distro = "debian" ]] || [[ $distro = "ubuntu" ]] || [[ $distro = "kali" ]] || [[ $distro = "tails" ]] || [[ $distro = "pureOS" ]] || command -v apt-get &> /dev/null; then
         apt-get update -y >> "/var/log/auto_update.log" 2>&1
         apt-get upgrade -y >> "/var/log/auto_update.log" 2>&1
         apt-get autoclean -y >> "/var/log/auto_update.log" 2>&1
         apt-get autoremove -y >> "/var/log/auto_update.log" 2>&1
-    elif command -v yum &> /dev/null; then
+    elif [[ $distro = "redhat" ]] || [[ $distro = "centOS" ]] || [[ $distro = "rocky" ]] || [[ $distro = "alma" ]] || [[ $distro = "fedora" ]] || command -v yum &> /dev/null; then
         yum update -y >> "/var/log/auto_update.log" 2>&1
-    elif command -v dnf &> /dev/null; then
+    elif [[ $distro = "redhat" ]] || [[ $distro = "centOS" ]] || [[ $distro = "rocky" ]] || [[ $distro = "alma" ]] || [[ $distro = "fedora" ]] || command -v dnf &> /dev/null; then
         dnf update -y >> "/var/log/auto_update.log" 2>&1
-    elif command -v pacman &> /dev/null; then
+    elif [[ $distro = "arch" ]] || [[ $distro = "crystal" ]] || [[ $distro = "steam" ]] || [[ $distro = "garuda" ]] || [[ $distro = "tearch" ]] || command -v pacman &> /dev/null; then
         pacman -Syu --noconfirm >> "/var/log/auto_update.log" 2>&1
     else
-        echo "No se ha podido determinar el gestor de paquetes del sistema"
+        echo -e "$rojo$negrita[ERROR]$fin_formato -  No se ha podido determinar el gestor de paquetes del sistema"
         exit 1
     fi
 }
@@ -108,6 +108,19 @@ pregunta() {
         programar_ejecucion
     else
         echo "No se realizará la actualización diaria."
+    fi
+}
+
+# Obtener hora de la ejecución diaria ya programada
+comprobar_ejecucion_diaria() {
+    # Comprobar si la línea ya está presente en el crontab
+    if grep -q "$PWD/$0" /etc/crontab; then
+        linea_existente=$(grep "$PWD/$0" /etc/crontab)
+        hora_existente=$(echo "$linea_existente" | awk '{print $2}')
+        minuto_existente=$(echo "$linea_existente" | awk '{print $1}')
+        echo "La actualización diaria está programada para las $hora_existente:$minuto_existente"
+    else
+        echo "No hay ninguna ejecución diaria programada."
     fi
 }
 
@@ -130,12 +143,7 @@ programar_ejecucion() {
             echo "Se programará la actualización diaria a las $hora"
         
         else
-            # Obtener la hora y el minuto de la ejecución diaria existente
-            linea_existente=$(grep "$PWD/$0" /etc/crontab)
-            hora_existente=$(echo "$linea_existente" | awk '{print $2}')
-            minuto_existente=$(echo "$linea_existente" | awk '{print $1}')
-            echo "Se mantendrá la actualización diaria a las $hora_existente:$minuto_existente."
-            return
+            comprobar_ejecucion_diaria
         fi
     
     elif ! grep -q "$PWD/$0" /etc/crontab; then
@@ -171,4 +179,3 @@ pregunta
 #Notificación por correo
 ##cat /etc/os-release
 #Preguntar si se actualiza diariamente. Si sí: Elegir la hora; si no, actualizar sólo una vez.
-
