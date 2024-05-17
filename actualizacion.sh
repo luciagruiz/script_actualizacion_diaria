@@ -83,19 +83,19 @@ comprobar_distro() {
 
 # Actualizar los repositorios e instalar actualizaciones
 actualizar_repo() {
-    if command -v apt-get &> /dev/null; then
+    if [[ $distro = "debian" ]] || [[ $distro = "ubuntu" ]] || [[ $distro = "kali" ]] || [[ $distro = "tails" ]] || [[ $distro = "pureOS" ]] || command -v apt-get &> /dev/null; then
         apt-get update -y >> "/var/log/auto_update.log" 2>&1
         apt-get upgrade -y >> "/var/log/auto_update.log" 2>&1
         apt-get autoclean -y >> "/var/log/auto_update.log" 2>&1
         apt-get autoremove -y >> "/var/log/auto_update.log" 2>&1
-    elif command -v yum &> /dev/null; then
+    elif [[ $distro = "redhat" ]] || [[ $distro = "centOS" ]] || [[ $distro = "rocky" ]] || [[ $distro = "alma" ]] || [[ $distro = "fedora" ]] || command -v yum &> /dev/null; then
         yum update -y >> "/var/log/auto_update.log" 2>&1
-    elif command -v dnf &> /dev/null; then
+    elif [[ $distro = "redhat" ]] || [[ $distro = "centOS" ]] || [[ $distro = "rocky" ]] || [[ $distro = "alma" ]] || [[ $distro = "fedora" ]] || command -v dnf &> /dev/null; then
         dnf update -y >> "/var/log/auto_update.log" 2>&1
-    elif command -v pacman &> /dev/null; then
+    elif [[ $distro = "arch" ]] || [[ $distro = "crystal" ]] || [[ $distro = "steam" ]] || [[ $distro = "garuda" ]] || [[ $distro = "tearch" ]] || command -v pacman &> /dev/null; then
         pacman -Syu --noconfirm >> "/var/log/auto_update.log" 2>&1
     else
-        echo "No se ha podido determinar el gestor de paquetes del sistema"
+        echo -e "$rojo$negrita[ERROR]$fin_formato -  No se ha podido determinar el gestor de paquetes del sistema"
         exit 1
     fi
 }
@@ -169,10 +169,5 @@ pregunta
 #Tareas pendientes
 #Menú de opciones:
 #Notificación por correo
-<<<<<<< HEAD
-#Preguntar si se actualiza diariamente. Si sí: Elegir la hora.
 ##cat /etc/os-release
-=======
 #Preguntar si se actualiza diariamente. Si sí: Elegir la hora; si no, actualizar sólo una vez.
-
->>>>>>> bf624ec (Actualización)
