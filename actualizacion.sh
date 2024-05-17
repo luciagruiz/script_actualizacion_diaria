@@ -5,7 +5,7 @@
 #Fecha:
 #Zona de depuración
         #Inicio de la zona de depuración con set -x (descomentar para activar)
-set -x
+#set -x
         #Advertencia de falta de variable (descomentar para activar)
 #set -u
 #Zona de declaración de variables
@@ -169,8 +169,9 @@ configurar_script() {
 #Zona del script
 
 #Control de argumentos
-while getopts "chv" opcion; do
+while getopts "achv" opcion; do
 	case $opcion in
+		a) comprobar_ejecucion_diaria; exit 0;;
 		c) configurar_script; exit 0;; 
 		h) mostrar_ayuda; exit 0;;
 		v) mostrar_version ;;
