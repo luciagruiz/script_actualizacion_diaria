@@ -105,7 +105,6 @@ pregunta() {
     read -p "¿Desea que el sistema se actualice diariamente? (s/n): " respuesta
     if [ "$respuesta" = "s" ]; then
         read -p "Por favor, ingrese la hora de actualización (formato HH:MM, por ejemplo, 09:00): " hora
-        echo "Se programará la actualización diaria a las $hora"
         programar_ejecucion
     else
         echo "No se realizará la actualización diaria."
@@ -123,28 +122,29 @@ programar_ejecucion() {
             echo "Se eliminó la ejecución diaria anteriormente programada."
             
             # Extraer la hora y el minuto de la variable $hora
-            hora=$(echo "$hora" | cut -d':' -f1)
+            hora2=$(echo "$hora" | cut -d':' -f1)
             minuto=$(echo "$hora" | cut -d':' -f2)
         
             # Agregar la línea al crontab con la hora especificada por el usuario
-            echo "$minuto $hora * * * root $PWD/$0" | sudo tee -a /etc/crontab >/dev/null
+            echo "$minuto $hora2 * * * root $PWD/$0" | sudo tee -a /etc/crontab >/dev/null
             echo "Se programará la actualización diaria a las $hora"
         
         else
             # Obtener la hora y el minuto de la ejecución diaria existente
-            hora_existente=
-            minuto_existente=
+            linea_existente=$(grep "$PWD/$0" /etc/crontab)
+            hora_existente=$(echo "$linea_existente" | awk '{print $2}')
+            minuto_existente=$(echo "$linea_existente" | awk '{print $1}')
             echo "Se mantendrá la actualización diaria a las $hora_existente:$minuto_existente."
             return
         fi
     
     elif ! grep -q "$PWD/$0" /etc/crontab; then
         # Extraer la hora y el minuto de la variable $hora
-        hora=$(echo "$hora" | cut -d':' -f1)
+        hora2=$(echo "$hora" | cut -d':' -f1)
         minuto=$(echo "$hora" | cut -d':' -f2)
         
         # Agregar la línea al crontab con la hora especificada por el usuario
-        echo "$minuto $hora * * * root $PWD/$0" | sudo tee -a /etc/crontab >/dev/null
+        echo "$minuto $hora2 * * * root $PWD/$0" | sudo tee -a /etc/crontab >/dev/null
         echo "Se programará la actualización diaria a las $hora"
     fi
 }
@@ -169,10 +169,6 @@ pregunta
 #Tareas pendientes
 #Menú de opciones:
 #Notificación por correo
-<<<<<<< HEAD
-#Preguntar si se actualiza diariamente. Si sí: Elegir la hora.
 ##cat /etc/os-release
-=======
 #Preguntar si se actualiza diariamente. Si sí: Elegir la hora; si no, actualizar sólo una vez.
 
->>>>>>> bf624ec (Actualización)
