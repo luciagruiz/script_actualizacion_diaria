@@ -5,7 +5,7 @@
 #Fecha:
 #Zona de depuración
         #Inicio de la zona de depuración con set -x (descomentar para activar)
-#set -x
+set -x
         #Advertencia de falta de variable (descomentar para activar)
 #set -u
 #Zona de declaración de variables
@@ -77,12 +77,13 @@ log_message() {
 }
 
 comprobar_distro() {
-	distro=cat /etc/os-release | grep '^ID=' | cut -d'=' -f2
+	distro=sudo cat /etc/os-release | grep '^ID=' | cut -d'=' -f2
 	return $distro
 }
 
 # Actualizar los repositorios e instalar actualizaciones
 actualizar_repo() {
+		comprobar_distro
     if [[ $distro = "debian" ]] || [[ $distro = "ubuntu" ]] || [[ $distro = "kali" ]] || [[ $distro = "tails" ]] || [[ $distro = "pureOS" ]] || command -v apt-get &> /dev/null; then
         apt-get update -y >> "/var/log/auto_update.log" 2>&1
         apt-get upgrade -y >> "/var/log/auto_update.log" 2>&1
@@ -149,11 +150,20 @@ programar_ejecucion() {
     fi
 }
 
+configurar_script() {
+	validar_root
+	validar_conexion
+	actualizar_repo
+	log_message "Sistema actualizado correctamente."
+	pregunta
+}
+
 #Zona del script
 
 #Control de argumentos
-while getopts "hv" opcion; do
+while getopts "chv" opcion; do
 	case $opcion in
+		c) configurar_script; exit 0;; 
 		h) mostrar_ayuda; exit 0;;
 		v) mostrar_version ;;
 		?) mostrar_ayuda; exit 1 ;;
@@ -164,7 +174,6 @@ validar_root
 validar_conexion
 actualizar_repo
 log_message "Sistema actualizado correctamente."
-pregunta
 
 #Tareas pendientes
 #Menú de opciones:
