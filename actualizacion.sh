@@ -39,29 +39,29 @@ fin_formato="\e[0m"
 
 mostrar_ayuda() {
 	echo -e ""$negrita"Uso:"$fin_formato" $0 [OPCIÓN]
-	"$negrita"Descripción:"$fin_formato" Este script actualiza el sistema \
+"$negrita"Descripción:"$fin_formato" Este script actualiza el sistema \
 diariamente. Se debe ejecutar con privilegios de root.
-	"$negrita"Parámetros aceptados:"$fin_formato"
-		-a Muestra la hora a la que se ha programado la ejecución diaria de \
+"$negrita"Parámetros aceptados:"$fin_formato"
+	-a Muestra la hora a la que se ha programado la ejecución diaria de \
 este script
-		-c Configura el script de forma interactiva
-		-p HORA Programa la ejecución diaria del script a una hora determinada. \
+	-c Configura el script de forma interactiva
+	-p HORA Programa la ejecución diaria del script a una hora determinada. \
 El formato aceptado para la hora es HH:MM con una hora entre 00 y 24.
-		-h Muestra esta ayuda
-		-v Muestra la versión 
-	"$negrita"Ejemplos de uso: "$fin_formato"
-		Para actualizar el sistema:
-		$0
+	-h Muestra esta ayuda
+	-v Muestra la versión 
+"$negrita"Ejemplos de uso: "$fin_formato"
+Para actualizar el sistema:
+	$0
 		
-		Para comprobar la hora a la que hay programada una actualización \
+Para comprobar la hora a la que hay programada una actualización \
 diaria del sistema:
-		$0 -a
+	$0 -a
 		
-		Para configurar una actualización diaria del sistema de forma interactiva:
-		$0 -c
+Para configurar una actualización diaria del sistema de forma interactiva:
+	$0 -c
 		
-		Para configurar una actualización diaria del sistema a las 9 de la mañana:
-		$0 -p 09:00"
+Para configurar una actualización diaria del sistema a las 9 de la mañana:
+	$0 -p 09:00"
 }
 
 mostrar_version() {
@@ -186,8 +186,7 @@ programar_ejecucion() {
         minuto=$(echo "$hora" | cut -d':' -f2)
         
         # Agregar la línea al crontab con la hora especificada por el usuario
-        echo "$minuto $hora2 * * * root $PWD/$0" | sudo tee -a 
-        /etc/crontab >/dev/null
+        echo "$minuto $hora2 * * * root $PWD/$0" | sudo tee -a /etc/crontab >/dev/null
         echo "Se programará la actualización diaria a las $hora"
     fi
 }
