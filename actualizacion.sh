@@ -20,7 +20,6 @@ cyan="\e[1;36m"
 
 #Color de fondo
 gris="\e[1;40m"
-verde="\e[1;42m"
 amarillo="\e[1;44m"
 azul="\e[1;44m"
 morado="\e[1;45m"
@@ -137,7 +136,7 @@ pregunta() {
 por ejemplo, 09:00): " hora
         programar_ejecucion
     else
-        echo "No se realizará la actualización diaria."
+        echo -e "$verde$negrita[OK]$fin_formato - No se realizará la actualización diaria."
     fi
 }
 
@@ -148,7 +147,7 @@ comprobar_ejecucion_diaria() {
         linea_existente=$(grep "$PWD/$0" /etc/crontab)
         hora_existente=$(echo "$linea_existente" | awk '{print $2}')
         minuto_existente=$(echo "$linea_existente" | awk '{print $1}')
-        echo "La actualización diaria está programada para \
+        echo -e "$verde$negrita[OK]$fin_formato - La actualización diaria está programada para \
 las $hora_existente:$minuto_existente"
     else
         echo "No hay ninguna ejecución diaria programada."
@@ -164,7 +163,7 @@ programar_ejecucion() {
         if [ "$respuesta2" = "s" ]; then
             # Eliminar la línea del crontab
             sudo sed -i "\~^.*$PWD/$0.*\$~d" /etc/crontab
-            echo "Se eliminó la ejecución diaria anteriormente programada."
+            echo -e "$verde$negrita[OK]$fin_formato - Se eliminó la ejecución diaria anteriormente programada."
             
             # Extraer la hora y el minuto de la variable $hora
             hora2=$(echo "$hora" | cut -d':' -f1)
@@ -174,7 +173,7 @@ programar_ejecucion() {
             #usuario
             echo "$minuto $hora2 * * * root $PWD/$0" | sudo tee -a 
             /etc/crontab >/dev/null
-            echo "Se programará la actualización diaria a las $hora"
+            echo -e "$verde$negrita[OK]$fin_formato - Se programará la actualización diaria a las $hora"
         
         else
             comprobar_ejecucion_diaria
@@ -187,7 +186,7 @@ programar_ejecucion() {
         
         # Agregar la línea al crontab con la hora especificada por el usuario
         echo "$minuto $hora2 * * * root $PWD/$0" | sudo tee -a /etc/crontab >/dev/null
-        echo "Se programará la actualización diaria a las $hora"
+        echo -e "$verde$negrita[OK]$fin_formato - Se programará la actualización diaria a las $hora"
     fi
 }
 
