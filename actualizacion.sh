@@ -26,6 +26,7 @@ mostrar_ayuda() {
 "$negrita"Parámetros aceptados:"$fin_formato"
 	-a Muestra la hora a la que se ha programado la ejecución diaria de este script
 	-c Configura el script de forma interactiva
+        -d Elimina la ejecución programada
 	-p HORA Programa la ejecución diaria del script a una hora determinada. El formato aceptado para la hora es HH:MM con una hora entre 00 y 24.
 	-h Muestra esta ayuda
 	-v Muestra la versión 
@@ -76,7 +77,8 @@ log_message() {
 #Función para comprobar la Distribución de la máquina
 comprobar_distro() {
 	distro=sudo cat /etc/os-release | grep '^ID=' | cut -d'=' -f2
-	return $distro
+    echo ""
+	return $distro 
 }
 
 # Actualizar los repositorios e instalar actualizaciones
@@ -136,6 +138,8 @@ eliminar_linea_crontab(){
     if grep -q "$(realpath $0)" /etc/crontab; then
         sudo sed -i "\~^.*$(realpath $0).*\$~d" /etc/crontab
         echo -e "$verde$negrita[OK]$fin_formato - Se eliminó la ejecución diaria anteriormente programada."
+    elif ! grep -q "$(realpath $0)" /etc/crontab; then
+        echo -e "$rojo$negrita[ERROR]$fin_formato - No se encontró ninguna ejecución diaria anteriormente programada."
     fi
 }
 
@@ -218,7 +222,7 @@ programar_ejecucion() {
 #Zona del script
 
 #Control de argumentos
-while getopts "achvp:" opcion; do
+while getopts "acdhvp:" opcion; do
     case $opcion in
         a) comprobar_ejecucion_diaria; exit 0;;
         c) pregunta; exit 0;;
