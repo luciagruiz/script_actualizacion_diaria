@@ -76,9 +76,7 @@ log_message() {
 
 #Función para comprobar la Distribución de la máquina
 comprobar_distro() {
-	distro=sudo cat /etc/os-release | grep '^ID=' | cut -d'=' -f2
-    echo ""
-	return $distro 
+	distro=$(sudo cat /etc/os-release | grep '^ID=' | cut -d'=' -f2)
 }
 
 # Actualizar los repositorios e instalar actualizaciones
