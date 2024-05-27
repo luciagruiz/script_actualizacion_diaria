@@ -209,11 +209,6 @@ programar_ejecucion() {
         # Agregar la línea al crontab con la hora especificada por el usuario
         echo "$minuto $hora2 * * * root $(realpath $0)" | sudo tee -a /etc/crontab >/dev/null
         echo -e "$verde$negrita[OK]$fin_formato - Se programará la actualización diaria a las $hora"
-
-        read -p "Hay una ejecución diaria del script programada, ¿deseas eliminarla? (s/n): " respuesta2
-        if [ "$respuesta2" = "s" ]; then
-            eliminar_linea_crontab
-        fi
     fi
 }
 
